@@ -20,6 +20,7 @@ require "DrawPrimitivesTest/DrawPrimitivesTest"
 require "EffectsTest/EffectsTest"
 require "EffectsAdvancedTest/EffectsAdvancedTest"
 require "ExtensionTest/ExtensionTest"
+require "FileUtilsTest/FileUtilsTest"
 require "FontTest/FontTest"
 require "IntervalTest/IntervalTest"
 require "KeypadTest/KeypadTest"
@@ -63,6 +64,7 @@ require "Physics3DTest/Physics3DTest"
 require "Scene3DTest/Scene3DTest"
 require "MaterialSystemTest/MaterialSystemTest"
 require "NavMeshTest/NavMeshTest"
+require "LuaLoaderTest/LuaLoaderTest"
 
 local LINE_SPACE = 40
 
@@ -111,6 +113,7 @@ local _allTests = {
     { isSupported = true,  name = "EffectAdvancedTest"     , create_func   =        EffectAdvancedTestMain  },
     { isSupported = true,  name = "ExtensionsTest"         , create_func=        ExtensionsTestMain      },
     { isSupported = true,  name = "FastTiledMapTest"       , create_func   =              FastTiledMapTestMain},
+    { isSupported = true,  name = "FileUtilsTest"          , create_func   =              FileUtilsTestMain},
     { isSupported = true,  name = "FontTest"               , create_func   =              FontTestMain      },
     { isSupported = true,  name = "IntervalTest"           , create_func   =              IntervalTestMain  },
     { isSupported = true,  name = "KeypadTest"             , create_func=                KeypadTestMain  }, 
@@ -119,10 +122,11 @@ local _allTests = {
     { isSupported = true,  name = "LayerTest"              , create_func   =                 LayerTestMain  },
     { isSupported = true,  name = "LightTest"          , create_func   =                 LightTestMain  },
     { isSupported = true,  name = "LuaBridgeTest"          , create_func   =        LuaBridgeMainTest },
+    { isSupported = true,  name = "LuaLoaderTest"          , create_func   =        LuaLoaderMain },
     { isSupported = true,  name = "MaterialSystemTest"     , create_func   =        MaterialSystemTest },
     { isSupported = true,  name = "MenuTest"               , create_func   =                  MenuTestMain  }, 
     { isSupported = true,  name = "MotionStreakTest"       , create_func   =          MotionStreakTest      },
-    { isSupported = false,  name = "MutiTouchTest"          , create_func=          MutiTouchTestMain     },
+    { isSupported = false, name = "MultiTouchTest"         , create_func   =          MultiTouchTestMain    },
     { isSupported = true,  name = "NavMeshTest"            , create_func   =       NavMeshTest },
     { isSupported = true,  name = "NewEventDispatcherTest"  , create_func   =       NewEventDispatcherTest },
     { isSupported = true,  name = "NodeTest"               , create_func   =                  CocosNodeTest },
@@ -186,7 +190,8 @@ function CreateTestMenu()
     local s = cc.Director:getInstance():getWinSize()
     local CloseItem = cc.MenuItemImage:create(s_pPathClose, s_pPathClose)
     CloseItem:registerScriptTapHandler(closeCallback)
-    CloseItem:setPosition(cc.p(s.width - 30, s.height - 30))
+    CloseItem:setAnchorPoint(1, 1)
+    CloseItem:setPosition(VisibleRect:rightTop())
 
     local CloseMenu = cc.Menu:create()
     CloseMenu:setPosition(0, 0)

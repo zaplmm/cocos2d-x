@@ -1,5 +1,6 @@
 /****************************************************************************
  Copyright (c) 2013 cocos2d-x.org
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos2d-x.org
 
@@ -913,6 +914,23 @@ public:
     SpriteGetSpriteFrameTest();
     virtual std::string title() const override { return "Sprite::getSpriteFrame(*)"; };
     virtual std::string subtitle() const override { return "setting after getting should be the same"; }
+};
+
+class Issue17119 : public SpriteTestDemo
+{
+public:
+    CREATE_FUNC(Issue17119);
+    Issue17119();
+    virtual std::string title() const override { return "Issue 17119"; };
+    virtual std::string subtitle() const override { return "flipping should work ok"; }
+
+    virtual void update(float dt) override;
+protected:
+    float _accum;
+    cocos2d::Sprite* _s1;
+    cocos2d::Sprite* _s2;
+    cocos2d::Sprite* _s3;
+    cocos2d::Sprite* _s4;
 };
 
 #endif

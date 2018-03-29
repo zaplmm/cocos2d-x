@@ -3,6 +3,7 @@
  * Copyright (c) 2012 Rolando Abarca. All rights reserved.
  * Copyright (c) 2013 Zynga Inc. All rights reserved.
  * Copyright (c) 2013-2016 Chukong Technologies Inc.
+ * Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  *
  * Heavy based on: https://github.com/funkaster/FakeWebGL/blob/master/FakeWebGL/WebGL/XMLHTTPRequest.h
  *
@@ -95,8 +96,9 @@ private:
     void _setHttpRequestHeader();
     void _setHttpRequestData(const char *data, size_t len);
     void _sendRequest(JSContext *cx);
-    void _notify(JS::HandleObject callback);
-    
+    void _notify(JS::HandleObject callback, JS::HandleValueArray args);
+    void _clearCallbacks();
+
     std::string                       _url;
     JSContext*                        _cx;
     std::string                       _meth;

@@ -1,6 +1,7 @@
 /*
  * Created by ucchen on 2/12/14.
- * Copyright (c) 2014 Chukong Technologies Inc.
+ * Copyright (c) 2014-2016 Chukong Technologies Inc.
+ * Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -79,7 +80,8 @@ jsval spbonedata_to_jsval(JSContext* cx, const spBoneData* v)
         parentVal = spbonedata_to_jsval(cx, v->parent);
     
     JS::RootedValue jsname(cx, c_string_to_jsval(cx, v->name));
-    bool ok = JS_DefineProperty(cx, tmp, "name", jsname, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+    bool ok = JS_DefineProperty(cx, tmp, "index", v->index, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+        JS_DefineProperty(cx, tmp, "name", jsname, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "parent", parentVal,JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "length", v->length, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "x", v->x, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
@@ -87,8 +89,9 @@ jsval spbonedata_to_jsval(JSContext* cx, const spBoneData* v)
         JS_DefineProperty(cx, tmp, "rotation", v->rotation, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "scaleX", v->scaleX, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "scaleY", v->scaleY, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "inheritScale", v->inheritScale, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "inheritRotation", v->inheritRotation, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+        JS_DefineProperty(cx, tmp, "shearX", v->shearX, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+        JS_DefineProperty(cx, tmp, "shearY", v->shearY, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+        JS_DefineProperty(cx, tmp, "transformMode", v->transformMode, JSPROP_ENUMERATE | JSPROP_PERMANENT);
     
     if (ok)
     {
@@ -124,8 +127,6 @@ jsval spbone_to_jsval(JSContext* cx, spBone& v)
         JS_DefineProperty(cx, tmp, "m10", v.c, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "m11", v.d, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "worldY", v.worldY, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-        JS_DefineProperty(cx, tmp, "worldSignX", v.worldSignX, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-        JS_DefineProperty(cx, tmp, "worldSignY", v.worldSignY, JSPROP_ENUMERATE | JSPROP_PERMANENT);
     /*
         JS_DefineProperty(cx, tmp, "worldRotation", v.worldRotation, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "worldScaleX", v.worldScaleX, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
@@ -178,6 +179,24 @@ jsval spattachment_to_jsval(JSContext* cx, spAttachment& v)
     return JSVAL_NULL;
 }
 
+jsval spColor_to_jsval(JSContext* cx, const spColor* v)
+{
+    if (!v)
+        return JSVAL_NULL;
+        
+    JS::RootedObject tmp(cx, JS_NewObject(cx, nullptr, JS::NullPtr(), JS::NullPtr()));
+    if (!tmp) return JSVAL_NULL;
+    
+    bool ok = JS_DefineProperty(cx, tmp, "r", v->r, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+    JS_DefineProperty(cx, tmp, "g", v->g, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+    JS_DefineProperty(cx, tmp, "b", v->b, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+    
+    if (ok)
+        return OBJECT_TO_JSVAL(tmp);
+    else
+        return JSVAL_NULL;
+}
+
 jsval spslotdata_to_jsval(JSContext* cx, spSlotData& v)
 {
     JS::RootedObject tmp(cx, JS_NewObject(cx, nullptr, JS::NullPtr(), JS::NullPtr()));
@@ -186,14 +205,15 @@ jsval spslotdata_to_jsval(JSContext* cx, spSlotData& v)
     JS::RootedValue jsname(cx, c_string_to_jsval(cx, v.name));
     JS::RootedValue jsattachmentName(cx, c_string_to_jsval(cx, v.attachmentName));
     JS::RootedValue jsboneData(cx, spbonedata_to_jsval(cx, v.boneData));
+    JS::RootedValue jscolor(cx, spColor_to_jsval(cx, &v.color));
+    JS::RootedValue jsdarkColor(cx, spColor_to_jsval(cx, v.darkColor));
     bool ok = JS_DefineProperty(cx, tmp, "name", jsname, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "attachmentName", jsattachmentName, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "r", v.r, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "g", v.g, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "b", v.b, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "a", v.a, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+        JS_DefineProperty(cx, tmp, "color", jscolor, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+        JS_DefineProperty(cx, tmp, "darkColor", jsdarkColor, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "blendMode", v.blendMode, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "boneData", jsboneData, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+        JS_DefineProperty(cx, tmp, "boneData", jsboneData, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+        JS_DefineProperty(cx, tmp, "index", v.index, JSPROP_ENUMERATE | JSPROP_PERMANENT);
     
     if (ok)
     {
@@ -211,14 +231,17 @@ jsval spslot_to_jsval(JSContext* cx, spSlot& v)
     JS::RootedValue jsbone(cx, spbone_to_jsval(cx, *v.bone));
     JS::RootedValue jsattachment(cx, spattachment_to_jsval(cx, *v.attachment));
     JS::RootedValue jsdata(cx, spslotdata_to_jsval(cx, *v.data));
-    bool ok = JS_DefineProperty(cx, tmp, "r", v.r, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "g", v.g, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "b", v.b, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "a", v.a, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+    JS::RootedValue jscolor(cx, spColor_to_jsval(cx, &v.color));
+    JS::RootedValue jsdarkColor(cx, spColor_to_jsval(cx, v.darkColor));
+    bool ok = JS_DefineProperty(cx, tmp, "color", jscolor, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+        JS_DefineProperty(cx, tmp, "darkColor", jsdarkColor, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "bone", jsbone, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         //JS_DefineProperty(cx, tmp, "skeleton", spskeleton_to_jsval(cx, *v.skeleton), NULL, NULL, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
         JS_DefineProperty(cx, tmp, "attachment", jsattachment, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
-        JS_DefineProperty(cx, tmp, "data", jsdata, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+        JS_DefineProperty(cx, tmp, "data", jsdata, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+        JS_DefineProperty(cx, tmp, "attachmentVerticesCapacity", v.attachmentVerticesCapacity, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+        JS_DefineProperty(cx, tmp, "attachmentVerticesCount", v.attachmentVerticesCount, JSPROP_ENUMERATE | JSPROP_PERMANENT) &&
+        JS_DefineProperty(cx, tmp, "attachmentVertices", *v.attachmentVertices, JSPROP_ENUMERATE | JSPROP_PERMANENT);
         
     if (ok)
     {
@@ -303,7 +326,7 @@ bool jsb_spine_TrackEntry_get_next(JSContext *cx, uint32_t argc, jsval *vp)
     }
 }
 
-bool jsb_spine_TrackEntry_get_previous(JSContext *cx, uint32_t argc, jsval *vp)
+bool jsb_spine_TrackEntry_get_mixingFrom(JSContext *cx, uint32_t argc, jsval *vp)
 {
     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
     JS::RootedObject jsthis(cx, args.thisv().toObjectOrNull());
@@ -311,9 +334,9 @@ bool jsb_spine_TrackEntry_get_previous(JSContext *cx, uint32_t argc, jsval *vp)
     spTrackEntry* cobj = (spTrackEntry *)(proxy ? proxy->ptr : NULL);
     if (cobj) {
         JS::RootedValue jsret(cx, JS::NullValue());
-        if (cobj->previous)
+        if (cobj->mixingFrom)
         {
-            jsret = sptrackentry_to_jsval(cx, *cobj->previous);
+            jsret = sptrackentry_to_jsval(cx, *cobj->mixingFrom);
         }
         args.rval().set(jsret);
         return true;
@@ -352,7 +375,7 @@ void js_register_spine_TrackEntry(JSContext *cx, JS::HandleObject global)
     
     static JSPropertySpec properties[] =
     {
-        JS_PSG("previous", jsb_spine_TrackEntry_get_previous, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+        JS_PSG("mixingFrom", jsb_spine_TrackEntry_get_mixingFrom, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_PSG("next", jsb_spine_TrackEntry_get_next, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_PS_END
     };
@@ -378,22 +401,57 @@ jsval sptrackentry_to_jsval(JSContext* cx, spTrackEntry& v)
     JS::RootedValue entryVal(cx, OBJECT_TO_JSVAL(entry));
     if (entryVal.isObject())
     {
-        JS::RootedValue val(cx, DOUBLE_TO_JSVAL(v.delay));
-        bool ok = JS_SetProperty(cx, entry, "delay", val);
-        val.set(DOUBLE_TO_JSVAL(v.time));
-        ok &= JS_SetProperty(cx, entry, "time", val);
-        val.set(DOUBLE_TO_JSVAL(v.lastTime));
-        ok &= JS_SetProperty(cx, entry, "lastTime", val);
-        val.set(DOUBLE_TO_JSVAL(v.endTime));
-        ok &= JS_SetProperty(cx, entry, "endTime", val);
+        JS::RootedValue val(cx, spanimation_to_jsval(cx, *v.animation));
+        bool ok = JS_SetProperty(cx, entry, "animation", val);
+        val.set(INT_TO_JSVAL(v.trackIndex));
+        ok &= JS_SetProperty(cx, entry, "trackIndex", val);
+        val.set(INT_TO_JSVAL(v.loop));
+        ok &= JS_SetProperty(cx, entry, "loop", val);
+        val.set(DOUBLE_TO_JSVAL(v.eventThreshold));
+        ok &= JS_SetProperty(cx, entry, "eventThreshold", val);
+        val.set(DOUBLE_TO_JSVAL(v.attachmentThreshold));
+        ok &= JS_SetProperty(cx, entry, "attachmentThreshold", val);
+        val.set(DOUBLE_TO_JSVAL(v.drawOrderThreshold));
+        ok &= JS_SetProperty(cx, entry, "drawOrderThreshold", val);
+        val.set(DOUBLE_TO_JSVAL(v.animationStart));
+        ok &= JS_SetProperty(cx, entry, "animationStart", val);
+        val.set(DOUBLE_TO_JSVAL(v.animationEnd));
+        ok &= JS_SetProperty(cx, entry, "animationEnd", val);
+        val.set(DOUBLE_TO_JSVAL(v.animationLast));
+        ok &= JS_SetProperty(cx, entry, "animationLast", val);
+        val.set(DOUBLE_TO_JSVAL(v.nextAnimationLast));
+        ok &= JS_SetProperty(cx, entry, "nextAnimationLast", val);
+        val.set(DOUBLE_TO_JSVAL(v.delay));
+        ok &= JS_SetProperty(cx, entry, "delay", val);
+        val.set(DOUBLE_TO_JSVAL(v.trackTime));
+        ok &= JS_SetProperty(cx, entry, "trackTime", val);
+        val.set(DOUBLE_TO_JSVAL(v.trackLast));
+        ok &= JS_SetProperty(cx, entry, "trackLast", val);
+        val.set(DOUBLE_TO_JSVAL(v.nextTrackLast));
+        ok &= JS_SetProperty(cx, entry, "nextTrackLast", val);
+        val.set(DOUBLE_TO_JSVAL(v.trackEnd));
+        ok &= JS_SetProperty(cx, entry, "trackEnd", val);
         val.set(DOUBLE_TO_JSVAL(v.timeScale));
         ok &= JS_SetProperty(cx, entry, "timeScale", val);
+        val.set(DOUBLE_TO_JSVAL(v.alpha));
+        ok &= JS_SetProperty(cx, entry, "alpha", val);
         val.set(DOUBLE_TO_JSVAL(v.mixTime));
         ok &= JS_SetProperty(cx, entry, "mixTime", val);
         val.set(DOUBLE_TO_JSVAL(v.mixDuration));
         ok &= JS_SetProperty(cx, entry, "mixDuration", val);
-        val.set(spanimation_to_jsval(cx, *v.animation));
-        ok &= JS_SetProperty(cx, entry, "animation", val);
+        val.set(DOUBLE_TO_JSVAL(v.interruptAlpha));
+        ok &= JS_SetProperty(cx, entry, "interruptAlpha", val);
+        val.set(DOUBLE_TO_JSVAL(v.totalAlpha));
+        ok &= JS_SetProperty(cx, entry, "totalAlpha", val);
+        
+        if (v.timelinesRotation)
+            val.set(DOUBLE_TO_JSVAL(*v.timelinesRotation));
+        else
+            val.set(JSVAL_NULL);
+        ok &= JS_SetProperty(cx, entry, "timelinesRotation", val);
+        
+        val.set(INT_TO_JSVAL(v.timelinesRotationCount));
+        ok &= JS_SetProperty(cx, entry, "timelinesRotationCount", val);
         
         if (ok)
         {

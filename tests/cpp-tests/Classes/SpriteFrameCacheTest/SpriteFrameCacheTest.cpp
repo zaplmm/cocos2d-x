@@ -1,6 +1,7 @@
 /****************************************************************************
  Copyright (c) 2012 cocos2d-x.org
  Copyright (c) 2013-2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -61,7 +62,7 @@ SpriteFrameCachePixelFormatTest::SpriteFrameCachePixelFormatTest()
         loadSpriteFrames("Images/sprite_frames_test/test_PVRTC2_NOALPHA.plist", Texture2D::PixelFormat::PVRTC2);
     }
     
-    // test loading atlases wihtout PixelFormat specified
+    // test loading atlases without PixelFormat specified
     Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB5A1);
     loadSpriteFrames("Images/sprite_frames_test/test_NoFormat.plist", Texture2D::PixelFormat::RGB5A1);
     

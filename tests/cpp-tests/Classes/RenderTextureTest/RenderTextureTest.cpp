@@ -1,3 +1,27 @@
+/****************************************************************************
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ 
+ http://www.cocos2d-x.org
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
 #include "RenderTextureTest.h"
 
 USING_NS_CC;
@@ -17,7 +41,7 @@ RenderTextureTests::RenderTextureTests()
 };
 
 /**
-* Impelmentation of RenderTextureSave
+* Implementation of RenderTextureSave
 */
 RenderTextureSave::RenderTextureSave()
 {
@@ -28,7 +52,7 @@ RenderTextureSave::RenderTextureSave()
     _target->retain();
     _target->setPosition(Vec2(s.width / 2, s.height / 2));
 
-    // note that the render texture is a Node, and contains a sprite of its texture for convience,
+    // note that the render texture is a Node, and contains a sprite of its texture for convenience,
     // so we can just parent it to the scene like any other Node
     this->addChild(_target, -1);
     
@@ -136,7 +160,7 @@ void RenderTextureSave::onTouchesMoved(const std::vector<Touch*>& touches, Event
 }
 
 /**
- * Impelmentation of RenderTextureIssue937
+ * Implementation of RenderTextureIssue937
  */
 
 RenderTextureIssue937::RenderTextureIssue937()
@@ -201,7 +225,7 @@ std::string RenderTextureIssue937::subtitle() const
 }
 
 /**
-* Impelmentation of RenderTextureZbuffer
+* Implementation of RenderTextureZbuffer
 */
 
 RenderTextureZbuffer::RenderTextureZbuffer()
@@ -449,7 +473,7 @@ void RenderTextureTestDepthStencil::draw(Renderer *renderer, const Mat4 &transfo
     _spriteDS->visit();
     
     _renderCmds[2].init(_globalZOrder, transform, flags);
-    _renderCmds[2].func = CC_CALLBACK_0(RenderTextureTestDepthStencil::onBeforDraw, this);
+    _renderCmds[2].func = CC_CALLBACK_0(RenderTextureTestDepthStencil::onBeforeDraw, this);
     renderer->addCommand(&_renderCmds[2]);
 
     _spriteDraw->visit();
@@ -484,7 +508,7 @@ void RenderTextureTestDepthStencil::onBeforeStencil()
 //    RenderState::StateBlock::_defaultState->setStencilOperation(RenderState::STENCIL_OP_REPLACE, RenderState::STENCIL_OP_REPLACE, RenderState::STENCIL_OP_REPLACE);
 }
 
-void RenderTextureTestDepthStencil::onBeforDraw()
+void RenderTextureTestDepthStencil::onBeforeDraw()
 {
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 

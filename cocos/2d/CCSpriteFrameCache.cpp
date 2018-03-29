@@ -5,6 +5,7 @@ Copyright (c) 2009      Robert J Payne
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
+Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -542,7 +543,7 @@ void SpriteFrameCache::removeSpriteFramesFromDictionary(ValueMap& dictionary)
     if (dictionary["frames"].getType() != cocos2d::Value::Type::MAP)
         return;
 
-    ValueMap framesDict = dictionary["frames"].asValueMap();
+    const ValueMap& framesDict = dictionary["frames"].asValueMap();
     std::vector<std::string> keysToRemove;
 
     for (const auto& iter : framesDict)
@@ -587,7 +588,7 @@ SpriteFrame* SpriteFrameCache::getSpriteFrameByName(const std::string& name)
                 frame = _spriteFrames.at(key);
                 if (!frame)
                 {
-                    CCLOG("cocos2d: SpriteFrameCache: Frame aliase '%s' isn't found", key.c_str());
+                    CCLOG("cocos2d: SpriteFrameCache: Frame aliases '%s' isn't found", key.c_str());
                 }
             }
         }

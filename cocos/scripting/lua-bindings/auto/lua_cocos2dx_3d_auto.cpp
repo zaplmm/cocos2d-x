@@ -1926,7 +1926,7 @@ int lua_cocos2dx_3d_Mesh_getName(lua_State* tolua_S)
             return 0;
         }
         const std::string& ret = cobj->getName();
-        tolua_pushcppstring(tolua_S,ret);
+        lua_pushlstring(tolua_S,ret.c_str(),ret.length());
         return 1;
     }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Mesh:getName",argc, 0);
@@ -5327,7 +5327,7 @@ int lua_cocos2dx_3d_Terrain_getHeightData(lua_State* tolua_S)
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_3d_Terrain_getHeightData'", nullptr);
             return 0;
         }
-        std::vector<float, std::allocator<float> > ret = cobj->getHeightData();
+        std::vector<float> ret = cobj->getHeightData();
         ccvector_float_to_luaval(tolua_S, ret);
         return 1;
     }

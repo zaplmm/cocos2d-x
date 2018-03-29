@@ -1,6 +1,7 @@
 /****************************************************************************
  Copyright (c) 2012 cocos2d-x.org
  Copyright (c) 2013-2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos2d-x.org
 
@@ -78,7 +79,7 @@ struct DownloaderTest : public TestCase
         auto bg = ui::Scale9Sprite::createWithSpriteFrameName("button_actived.png");
         bg->setContentSize(viewSize);
         
-        // add a titile on the top
+        // add a title on the top
         auto title = Label::createWithTTF(name,"fonts/arial.ttf",16);
         title->setTag(TAG_TITLE);
         title->setAnchorPoint(Vec2(0.5, 1));
